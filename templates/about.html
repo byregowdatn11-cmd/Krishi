@@ -1,0 +1,105 @@
+{% extends "layout.html" %}
+
+{% block title %}About Bhooswarga - Campus Krishi{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="text-center mb-5">About Bhooswarga</h1>
+        </div>
+    </div>
+
+    <!-- About Bhooswarga -->
+    <section class="mb-5">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h2 class="text-success mb-4">Bhooswarga – Heaven on Earth</h2>
+                <p class="lead">Bhooswarga (meaning <strong>Heaven on Earth</strong>) is an interdisciplinary urban sustainability initiative rooted in the belief that healthy soil, healthy food, and healthy communities are deeply connected.</p>
+                <p>Started as a small campus pilot at <strong>Nitte Meenakshi Institute of Technology (NMIT), Bengaluru</strong>, Bhooswarga has grown into a vibrant living laboratory where students, faculty, and volunteers come together to practice sustainable farming, climate-resilient design, and community-centric innovation.</p>
+                <p>What began as a garden is now evolving into a city-scale model for urban farming, education, and climate action.</p>
+            </div>
+            <div class="col-lg-6">
+                <div class="text-center">
+                    <img id="bhooswarga-img" src="{{ url_for('static', filename='uploads/bhooswarga_garden.png') }}" class="img-fluid rounded shadow" alt="Bhooswarga Garden" onerror="this.onerror=null;this.src='https://via.placeholder.com/500x400/28a745/ffffff?text=Bhooswarga'">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Team -->
+    <section class="mb-5">
+        <h2 class="text-center mb-5">Our Team</h2>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <img src="{{ url_for('static', filename='uploads/dr_sumaraj.png') }}" class="rounded-circle mb-3" style="width: 130px; height: 130px; object-fit: cover;" alt="Dr. Sumaraj" onerror="this.onerror=null;this.src='https://via.placeholder.com/130?text=Dr+Sumaraj'">
+                        <h5 class="mb-1">Dr. Sumaraj</h5>
+                        <p class="text-muted mb-3">Assistant Professor, Department of Civil Engineering, NMIT</p>
+                        <p class="small">Dr. Sumaraj is an Assistant Professor in the Department of Civil Engineering at Nitte Meenakshi Institute of Technology, Bengaluru. She holds an M.Tech from IIT Kharagpur and a PhD from the University of Auckland, New Zealand. An expert in Environmental Engineering and Sustainable Technologies, her work focuses on translating research into real-world impact through experiential learning and community-driven initiatives. As the founder and project lead of Bhooswarga, she integrates urban farming, climate resilience, and engineering education to build inclusive, hands-on learning spaces that promote sustainability, well-being, and innovation.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <div class="row">
+                    <div class="col-md-12 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title text-success">Core Team</h5>
+
+                                <div class="row">
+                                    <div class="col-md-4 mb-4 text-center">
+                                        <img src="{{ url_for('static', filename='uploads/byre_gowda.png') }}" class="rounded-circle mb-3" style="width: 110px; height: 110px; object-fit: cover;" alt="Byre Gowda" onerror="this.onerror=null;this.src='https://via.placeholder.com/110?text=Byre'">
+                                        <h6 class="mb-1">Byre Gowda</h6>
+                                        <p class="small text-muted mb-2">3rd year Electronics and Communication Engineering student</p>
+                                        <p class="small">Byre Gowda is passionate about integrating IoT, AI, and energy-efficient systems into smart farming. He believes that hands-on learning in collaboration with club members fosters creativity, innovation, and holistic development.</p>
+                                    </div>
+                                    <div class="col-md-4 mb-4 text-center">
+                                        <img src="{{ url_for('static', filename='uploads/vishwadeep_k.jpg') }}" class="rounded-circle mb-3" style="width: 110px; height: 110px; object-fit: cover;" alt="Vishwadeep K" onerror="this.onerror=null;this.src='https://via.placeholder.com/110?text=Vishwadeep'">
+                                        <h6 class="mb-1">Vishwadeep K</h6>
+                                        <p class="small text-muted mb-2">3rd year Civil Engineering student</p>
+                                        <p class="small">Vishwadeep focuses on sustainable infrastructure and smart construction practices, integrating modern technologies into civil engineering solutions. He believes that hands-on learning and active collaboration with club members play a vital role in nurturing creativity and professional growth.</p>
+                                    </div>
+                                    <div class="col-md-4 mb-4 text-center">
+                                        <img src="{{ url_for('static', filename='uploads/abhishek_r.jpg') }}" class="rounded-circle mb-3" style="width: 110px; height: 110px; object-fit: cover;" alt="Abhishek R" onerror="this.onerror=null;this.src='https://via.placeholder.com/110?text=Abhishek'">
+                                        <h6 class="mb-1">Abhishek R</h6>
+                                        <p class="small text-muted mb-2">2nd year Civil Engineering student</p>
+                                        <p class="small">Abhishek is interested in façade design and green infrastructure. He has hands-on experience in the windows and façade business in Bagalkot and contributes to Bhooswarga with collaborative sustainability initiatives.</p>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+</div>
+
+<script>
+function setupImageUpload(inputId, imgId) {
+    const input = document.getElementById(inputId);
+    const img = document.getElementById(imgId);
+    if (!input || !img) return;
+
+    input.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    setupImageUpload('dr-sumaraj-upload', 'dr-sumaraj-photo');
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Products - Campus Krishi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .sidebar {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        .sidebar .nav-link {
+            color: white;
+            padding: 1rem;
+            border-radius: 5px;
+            margin: 2px 0;
+        }
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background-color: rgba(255,255,255,0.1);
+        }
+        .main-content {
+            padding: 2rem;
+        }
+        .product-card {
+            transition: transform 0.3s ease;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+        .stock-badge {
+            font-size: 0.875rem;
+        }
+        .action-btn {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 p-0">
+                <div class="sidebar">
+                    <div class="p-3">
+                        <h4><i class="fas fa-leaf"></i> Campus Krishi</h4>
+                        <p class="small mb-0">Admin Panel</p>
+                    </div>
+                    <nav class="nav flex-column p-3">
+                        <a href="{{ url_for('admin_dashboard') }}" class="nav-link">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                        <a href="{{ url_for('admin_products') }}" class="nav-link active">
+                            <i class="fas fa-carrot"></i> Products
+                        </a>
+                        <a href="{{ url_for('add_product') }}" class="nav-link">
+                            <i class="fas fa-plus"></i> Add Product
+                        </a>
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-chart-bar"></i> Reports
+                        </a>
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-users"></i> Customers
+                        </a>
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-cog"></i> Settings
+                        </a>
+                        <a href="{{ url_for('admin_logout') }}" class="nav-link">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10">
+                <div class="main-content">
+                    <!-- Header -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2>Manage Products</h2>
+                        <div>
+                            <a href="{{ url_for('add_product') }}" class="btn btn-success">
+                                <i class="fas fa-plus"></i> Add New Product
+                            </a>
+                            <a href="{{ url_for('home') }}" class="btn btn-outline-success ms-2">
+                                <i class="fas fa-eye"></i> View Site
+                            </a>
+                        </div>
+                    </div>
+
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+
+                    <!-- Search and Filter -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                        <input type="text" class="form-control" id="search-products" placeholder="Search products...">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <select class="form-select" id="filter-stock">
+                                        <option value="">All Products</option>
+                                        <option value="instock">In Stock</option>
+                                        <option value="outofstock">Out of Stock</option>
+                                        <option value="lowstock">Low Stock</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <select class="form-select" id="sort-products">
+                                        <option value="">Sort by...</option>
+                                        <option value="name">Name</option>
+                                        <option value="price-low">Price (Low to High)</option>
+                                        <option value="price-high">Price (High to Low)</option>
+                                        <option value="stock">Stock Level</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Products Grid -->
+                    <div class="row" id="products-container">
+                        {% for vegetable in vegetables %}
+                        <div class="col-lg-4 col-md-6 mb-4 product-item" 
+                             data-name="{{ vegetable.name|lower }}" 
+                             data-price="{{ vegetable.price }}" 
+                             data-stock="{{ vegetable.stock }}">
+                            <div class="card product-card h-100">
+                                {% if vegetable.image %}
+                                <img src="{{ url_for('static', filename='uploads/' + vegetable.image) }}" 
+                                     class="card-img-top" 
+                                     alt="{{ vegetable.name }}"
+                                     style="height: 200px; object-fit: cover;">
+                                {% else %}
+                                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" 
+                                     style="height: 200px;">
+                                    <i class="fas fa-carrot fa-3x text-success"></i>
+                                </div>
+                                {% endif %}
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ vegetable.name }}</h5>
+                                    <p class="card-text">{{ vegetable.description or 'No description available' }}</p>
+                                    
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="h5 text-success">₹{{ "%.2f"|format(vegetable.price) }}/kg</span>
+                                            <span class="stock-badge badge {% if vegetable.stock > 20 %}bg-success{% elif vegetable.stock > 0 %}bg-warning{% else %}bg-danger{% endif %}">
+                                                {% if vegetable.stock > 0 %}
+                                                {{ vegetable.stock }}kg in stock
+                                                {% else %}
+                                                Out of stock
+                                                {% endif %}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="d-flex gap-2">
+                                        <a href="{{ url_for('edit_product', veg_id=vegetable.id) }}" 
+                                           class="btn btn-sm btn-outline-primary action-btn flex-fill">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </a>
+                                        <a href="{{ url_for('delete_product', veg_id=vegetable.id) }}" 
+                                           class="btn btn-sm btn-outline-danger action-btn flex-fill"
+                                           onclick="return confirm('Are you sure you want to delete {{ vegetable.name }}?')">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Empty State -->
+                    {% if vegetables|length == 0 %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-carrot fa-4x text-muted mb-3"></i>
+                        <h3>No Products Found</h3>
+                        <p class="text-muted">Start by adding your first vegetable product.</p>
+                        <a href="{{ url_for('add_product') }}" class="btn btn-success">
+                            <i class="fas fa-plus"></i> Add First Product
+                        </a>
+                    </div>
+                    {% endif %}
+
+                    <!-- Statistics -->
+                    <div class="row mt-4">
+                        <div class="col-md-3">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h4>{{ vegetables|length }}</h4>
+                                    <p class="text-muted mb-0">Total Products</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h4>{{ vegetables|selectattr('stock', 'greaterthan', 0)|list|length }}</h4>
+                                    <p class="text-muted mb-0">In Stock</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h4>{{ vegetables|selectattr('stock', 'equalto', 0)|list|length }}</h4>
+                                    <p class="text-muted mb-0">Out of Stock</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h4>{{ vegetables|selectattr('stock', 'lessthan', 10)|list|length }}</h4>
+                                    <p class="text-muted mb-0">Low Stock</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Search functionality
+        document.getElementById('search-products').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const products = document.querySelectorAll('.product-item');
+            
+            products.forEach(product => {
+                const name = product.getAttribute('data-name');
+                if (name.includes(searchTerm)) {
+                    product.style.display = 'block';
+                } else {
+                    product.style.display = 'none';
+                }
+            });
+        });
+
+        // Filter functionality
+        document.getElementById('filter-stock').addEventListener('change', function(e) {
+            const filterValue = e.target.value;
+            const products = document.querySelectorAll('.product-item');
+            
+            products.forEach(product => {
+                const stock = parseInt(product.getAttribute('data-stock'));
+                
+                switch(filterValue) {
+                    case 'instock':
+                        product.style.display = stock > 0 ? 'block' : 'none';
+                        break;
+                    case 'outofstock':
+                        product.style.display = stock === 0 ? 'block' : 'none';
+                        break;
+                    case 'lowstock':
+                        product.style.display = stock > 0 && stock < 10 ? 'block' : 'none';
+                        break;
+                    default:
+                        product.style.display = 'block';
+                }
+            });
+        });
+
+        // Sort functionality
+        document.getElementById('sort-products').addEventListener('change', function(e) {
+            const sortValue = e.target.value;
+            const container = document.getElementById('products-container');
+            const products = Array.from(container.querySelectorAll('.product-item'));
+            
+            products.sort((a, b) => {
+                switch(sortValue) {
+                    case 'name':
+                        return a.getAttribute('data-name').localeCompare(b.getAttribute('data-name'));
+                    case 'price-low':
+                        return parseFloat(a.getAttribute('data-price')) - parseFloat(b.getAttribute('data-price'));
+                    case 'price-high':
+                        return parseFloat(b.getAttribute('data-price')) - parseFloat(a.getAttribute('data-price'));
+                    case 'stock':
+                        return parseInt(b.getAttribute('data-stock')) - parseInt(a.getAttribute('data-stock'));
+                    default:
+                        return 0;
+                }
+            });
+            
+            products.forEach(product => container.appendChild(product));
+        });
+    </script>
+</body>
+</html>

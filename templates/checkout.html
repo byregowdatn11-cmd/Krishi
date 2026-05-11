@@ -1,0 +1,181 @@
+{% extends "layout.html" %}
+
+{% block title %}Checkout - Campus Krishi{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">
+                <i class="fas fa-credit-card"></i> Checkout
+            </h1>
+        </div>
+    </div>
+
+    {% if cart_items %}
+    <div class="row">
+        <!-- Order Form -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Delivery Information</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" id="checkout-form">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="customer_name" class="form-label">Full Name *</label>
+                                <input type="text" class="form-control" id="customer_name" name="customer_name" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="phone" class="form-label">Phone Number *</label>
+                                <input type="tel" class="form-control" id="phone" name="phone" pattern="[0-9]{10}" required>
+                                <div class="form-text">Enter 10-digit mobile number</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Delivery Address *</label>
+                            <textarea class="form-control" id="address" name="address" rows="3" required 
+                                      placeholder="Enter your complete delivery address including landmark"></textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">Email (Optional)</label>
+                                <input type="email" class="form-control" id="email" name="email">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="delivery_time" class="form-label">Preferred Delivery Time</label>
+                                <select class="form-select" id="delivery_time" name="delivery_time">
+                                    <option value="">Select preferred time</option>
+                                    <option value="morning">Morning (9 AM - 12 PM)</option>
+                                    <option value="afternoon">Afternoon (12 PM - 4 PM)</option>
+                                    <option value="evening">Evening (4 PM - 7 PM)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Order Notes (Optional)</label>
+                            <textarea class="form-control" id="notes" name="notes" rows="2" 
+                                      placeholder="Any special instructions for delivery"></textarea>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('cart') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to Cart
+                            </a>
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-check-circle"></i> Place Order
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Order Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6>Order Items:</h6>
+                        {% for item in cart_items %}
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>{{ item.vegetable.name }} x {{ item.quantity }}kg</span>
+                            <span>₹{{ "%.2f"|format(item.subtotal) }}</span>
+                        </div>
+                        {% endfor %}
+                        <hr>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Subtotal:</span>
+                            <span>₹{{ "%.2f"|format(cart_total) }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Delivery Fee:</span>
+                            <span class="text-success">FREE</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Packaging:</span>
+                            <span>₹0.00</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between">
+                            <h5>Total Amount:</h5>
+                            <h5 class="text-success">₹{{ "%.2f"|format(cart_total) }}</h5>
+                        </div>
+                    </div>
+
+                    <!-- Payment Method -->
+                    <div class="mb-3">
+                        <h6>Payment Method:</h6>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="payment_method" id="cod" value="cod" checked>
+                            <label class="form-check-label" for="cod">
+                                <i class="fas fa-money-bill-wave"></i> Cash on Delivery
+                            </label>
+                        </div>
+                        <div class="alert alert-info mt-3">
+                            <h6><i class="fas fa-phone"></i> Payment Details:</h6>
+                            <p class="mb-0"><strong>Pay to this number: 7349784480</strong></p>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+
+            <!-- Terms and Conditions -->
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h6 class="card-title">Important Notes:</h6>
+                    <ul class="list-unstyled small">
+                        <li><i class="fas fa-check text-success"></i> Fresh quality guaranteed</li>
+                        <li><i class="fas fa-check text-success"></i> Free delivery on all orders</li>
+                        <li><i class="fas fa-check text-success"></i> Order confirmation via SMS</li>
+                        <li><i class="fas fa-check text-success"></i> 100% refund if not satisfied</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <i class="fas fa-exclamation-triangle fa-4x text-warning mb-3"></i>
+        <h3>Cannot Proceed to Checkout</h3>
+        <p class="text-muted">Your cart is empty. Please add items to proceed with checkout.</p>
+        <a href="{{ url_for('vegetables') }}" class="btn btn-success btn-lg">
+            <i class="fas fa-shopping-basket"></i> Go Shopping
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Order Confirmation Modal -->
+<div class="modal fade" id="confirmModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Order</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to place this order?</p>
+                <p class="mb-0"><strong>Total Amount: ₹{{ "%.2f"|format(cart_total) }}</strong></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" id="confirm-order">Confirm Order</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

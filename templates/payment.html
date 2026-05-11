@@ -1,0 +1,113 @@
+{% extends "layout.html" %}
+
+{% block title %}Payment - Campus Krishi{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">
+                <i class="fas fa-credit-card"></i> Choose Payment Method
+            </h1>
+        </div>
+    </div>
+
+    <!-- Order Summary -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Order Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6>Order Items:</h6>
+                        {% for item in cart_items %}
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>{{ item.vegetable.name }} x {{ item.quantity }}kg</span>
+                            <span>₹{{ "%.2f"|format(item.subtotal) }}</span>
+                        </div>
+                        {% endfor %}
+                        <hr>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Subtotal:</span>
+                            <span>₹{{ "%.2f"|format(cart_total) }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Delivery Fee:</span>
+                            <span class="text-success">FREE</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between">
+                            <h5>Total Amount:</h5>
+                            <h5 class="text-success">₹{{ "%.2f"|format(cart_total) }}</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Customer Details</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Name:</strong> {{ order.customer_name }}</p>
+                    <p><strong>Phone:</strong> {{ order.phone }}</p>
+                    <p><strong>Address:</strong> {{ order.address }}</p>
+                    {% if order.email %}
+                    <p><strong>Email:</strong> {{ order.email }}</p>
+                    {% endif %}
+                    {% if order.delivery_time %}
+                    <p><strong>Delivery Time:</strong> {{ order.delivery_time }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Confirmed -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Order Confirmed</h5>
+                </div>
+                <div class="card-body text-center">
+                    <i class="fas fa-check-circle fa-4x text-success mb-3"></i>
+                    <h4>Thank You for Your Order!</h4>
+                    <p class="text-muted">Your order has been placed successfully. We will contact you soon for delivery details.</p>
+                    
+                    <div class="mt-4">
+                        <a href="{{ url_for('home') }}" class="btn btn-success btn-lg">
+                            <i class="fas fa-home"></i> Continue Shopping
+                        </a>
+                        <a href="{{ url_for('cart') }}" class="btn btn-outline-secondary btn-lg ms-2">
+                            <i class="fas fa-shopping-cart"></i> View Cart
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Payment Information -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="alert alert-info">
+            <h6><i class="fas fa-shield-alt"></i> Secure Payment Guarantee</h6>
+            <ul class="mb-0">
+                <li>All transactions are 100% secure</li>
+                <li>Your payment information is encrypted</li>
+                <li>Multiple payment options available</li>
+                <li>Instant payment confirmation</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

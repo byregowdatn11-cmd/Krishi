@@ -1,0 +1,207 @@
+{% extends "layout.html" %}
+
+{% block title %}Contact Us - Campus Krishi{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="text-center mb-5">Contact Us</h1>
+            <p class="text-center text-muted mb-5">We'd love to hear from you! Get in touch with us for any questions or feedback.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Contact Form -->
+        <div class="col-lg-8 mb-4">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Send us a Message</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="name" class="form-label">Name *</label>
+                                <input type="text" class="form-control" id="name" name="name" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" name="email">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" id="phone" name="phone" pattern="[0-9]{10}">
+                            <div class="form-text">Optional: Enter 10-digit mobile number</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="subject" class="form-label">Subject</label>
+                            <select class="form-select" id="subject" name="subject">
+                                <option value="">Select a subject</option>
+                                <option value="general">General Inquiry</option>
+                                <option value="order">Order Related</option>
+                                <option value="feedback">Feedback</option>
+                                <option value="complaint">Complaint</option>
+                                <option value="partnership">Partnership</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Message *</label>
+                            <textarea class="form-control" id="message" name="message" rows="5" required 
+                                      placeholder="Tell us how we can help you..."></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Rate Your Experience</label>
+                            <div class="d-flex gap-2" id="rating_stars">
+                                <input type="hidden" id="rating" name="rating" value="5">
+                                <i class="fas fa-star star-icon" data-rating="1" style="cursor: pointer; font-size: 1.5rem; color: #ffc107;"></i>
+                                <i class="fas fa-star star-icon" data-rating="2" style="cursor: pointer; font-size: 1.5rem; color: #ffc107;"></i>
+                                <i class="fas fa-star star-icon" data-rating="3" style="cursor: pointer; font-size: 1.5rem; color: #ffc107;"></i>
+                                <i class="fas fa-star star-icon" data-rating="4" style="cursor: pointer; font-size: 1.5rem; color: #ffc107;"></i>
+                                <i class="fas fa-star star-icon" data-rating="5" style="cursor: pointer; font-size: 1.5rem; color: #ffc107;"></i>
+                            </div>
+                            <small class="text-muted d-block mt-2">Your rating: <strong id="rating_value">5 stars</strong></small>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="newsletter" name="newsletter">
+                                <label class="form-check-label" for="newsletter">
+                                    I'd like to receive updates about fresh vegetables and special offers
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-paper-plane"></i> Send Message
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Information -->
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Contact Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6><i class="fas fa-envelope text-success"></i> Email</h6>
+                        <p>sumaraj.r@nmit.ac.in</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <h6><i class="fas fa-phone text-success"></i> Phone</h6>
+                        <p>7349784480</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <h6><i class="fas fa-map-marker-alt text-success"></i> Location</h6>
+                        <p>NMIT Campus, Bengaluru</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Quick Links</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <a href="{{ url_for('home') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-shopping-basket text-success"></i> Shop Vegetables
+                        </a>
+                        <a href="{{ url_for('about') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-info-circle text-success"></i> About Us
+                        </a>
+                        <a href="{{ url_for('vision') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-eye text-success"></i> Our Vision
+                        </a>
+                        <a href="{{ url_for('process') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-cogs text-success"></i> Our Process
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Social Media -->
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Follow Us</h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="d-flex justify-content-around">
+                        <a href="https://www.instagram.com/bhooswarga_nmit?igsh=MWFndG9nbHY3MW9uOA==" class="text-success fs-4" target="_blank"><i class="fab fa-instagram"></i></a>
+                        <a href="https://wa.me/7349784480" class="text-success fs-4" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                    <p class="mt-3 small text-muted">Stay connected for updates and special offers!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    </div>
+</div>
+
+<script>
+    // Star rating functionality
+    document.querySelectorAll('.star-icon').forEach(star => {
+        star.addEventListener('click', function() {
+            const rating = this.getAttribute('data-rating');
+            document.getElementById('rating').value = rating;
+            document.getElementById('rating_value').textContent = rating + ' star' + (rating != 1 ? 's' : '');
+            
+            // Update star colors
+            document.querySelectorAll('.star-icon').forEach(s => {
+                if (s.getAttribute('data-rating') <= rating) {
+                    s.style.color = '#ffc107';
+                } else {
+                    s.style.color = '#ccc';
+                }
+            });
+        });
+        
+        // Add hover effect
+        star.addEventListener('mouseover', function() {
+            const rating = this.getAttribute('data-rating');
+            document.querySelectorAll('.star-icon').forEach(s => {
+                if (s.getAttribute('data-rating') <= rating) {
+                    s.style.color = '#ff9800';
+                } else {
+                    s.style.color = '#ccc';
+                }
+            });
+        });
+    });
+    
+    // Reset on mouse leave
+    document.getElementById('rating_stars').addEventListener('mouseleave', function() {
+        const currentRating = document.getElementById('rating').value;
+        document.querySelectorAll('.star-icon').forEach(s => {
+            if (s.getAttribute('data-rating') <= currentRating) {
+                s.style.color = '#ffc107';
+            } else {
+                s.style.color = '#ccc';
+            }
+        });
+    });
+    
+    // Initialize first 5 stars as selected
+    document.querySelectorAll('.star-icon').forEach(s => {
+        s.style.color = '#ffc107';
+    });
+</script>
+
+{% endblock %}

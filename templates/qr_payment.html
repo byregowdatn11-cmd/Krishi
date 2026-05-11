@@ -1,0 +1,183 @@
+{% extends "layout.html" %}
+
+{% block title %}QR Code Payment - Campus Krishi{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Order Summary -->
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-qrcode"></i> Scan & Pay
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Order Details</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <td><strong>Order ID:</strong></td>
+                                    <td>#{{ order.id }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Customer:</strong></td>
+                                    <td>{{ order.customer_name }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Amount:</strong></td>
+                                    <td class="text-success">₹{{ "%.2f"|format(cart_total) }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <h6>Payment QR Code</h6>
+                            <div class="text-center">
+                                <img src="data:image/png;base64,{{ qr_data.qr_code }}" 
+                                     alt="Payment QR Code" 
+                                     class="img-fluid border border-3 p-2"
+                                     style="max-width: 250px;">
+                                <p class="mt-2 mb-0">
+                                    <small class="text-muted">Scan this QR code with any UPI app</small>
+                                </p>
+                                <div class="alert alert-info mt-2">
+                                    <strong>UPI ID: {{ qr_data.upi_id }}</strong>
+                                    <br><small>Use this UPI ID if QR doesn't work</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Order Items -->
+                    <div class="mt-4">
+                        <h6>Order Items</h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Qty</th>
+                                        <th>Price</th>
+                                        <th>Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in cart_items %}
+                                    <tr>
+                                        <td>{{ item.vegetable.name }}</td>
+                                        <td>{{ item.quantity }}kg</td>
+                                        <td>₹{{ "%.2f"|format(item.vegetable.price) }}</td>
+                                        <td>₹{{ "%.2f"|format(item.subtotal) }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Verification Form -->
+    <div class="row mt-4">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-check-circle"></i> Payment Verification
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('verify_qr_payment', order_id=order.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="transaction_id" class="form-label">Transaction ID *</label>
+                                <input type="text" class="form-control" id="transaction_id" name="transaction_id" 
+                                       placeholder="Enter UPI transaction ID" required>
+                                <div class="form-text">After successful payment, enter the transaction ID from your UPI app</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="upi_id" class="form-label">Your UPI ID</label>
+                                <input type="text" class="form-control" id="upi_id" name="upi_id" 
+                                       placeholder="your-upi@paytm" required>
+                                <div class="form-text">Enter the UPI ID you used for payment</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="amount" class="form-label">Amount Paid *</label>
+                                <input type="number" class="form-control" id="amount" name="amount" 
+                                       value="{{ "%.2f"|format(cart_total) }}" step="0.01" required>
+                                <div class="form-text">Enter the exact amount you paid (₹{{ "%.2f"|format(cart_total) }})</div>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center mt-3">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-check"></i> Verify Payment & Complete Order
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Instructions -->
+    <div class="row mt-4">
+        <div class="col-lg-8">
+            <div class="alert alert-info">
+                <h6><i class="fas fa-info-circle"></i> How to Pay</h6>
+                <ol class="mb-0">
+                    <li>Scan the QR code with any UPI app (PhonePe, Paytm, Google Pay, etc.)</li>
+                    <li>Or manually send money to UPI ID: <strong>{{ qr_data.upi_id }}</strong></li>
+                    <li>Enter the amount: ₹{{ "%.2f"|format(cart_total) }}</li>
+                    <li>Complete the payment using your UPI app</li>
+                    <li>After payment, come back to this page</li>
+                    <li>Enter your transaction ID and UPI ID in the verification form</li>
+                    <li>Click "Verify Payment & Complete Order" to confirm</li>
+                </ol>
+                <div class="mt-2">
+                    <small class="text-muted">Note: The QR code uses a test UPI ID for demonstration. Replace with your actual business UPI ID in production.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alternative Options -->
+    <div class="row mt-4">
+        <div class="col-lg-8 text-center">
+            <div class="card border-warning">
+                <div class="card-body">
+                    <h6 class="card-title">Alternative Payment Options</h6>
+                    <p class="mb-3">If QR code doesn't work, try these options:</p>
+                    <div class="d-flex justify-content-around">
+                        <a href="{{ url_for('payment', order_id=order.id) }}" class="btn btn-outline-primary me-2">
+                            <i class="fas fa-credit-card"></i> Other Payment Methods
+                        </a>
+                        <a href="{{ url_for('cart') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Cart
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Payment Status Check -->
+<div class="row mt-4">
+    <div class="col-lg-8">
+        <div class="alert alert-warning">
+            <h6><i class="fas fa-exclamation-triangle"></i> Important</h6>
+            <p class="mb-0">
+                <strong>Do not close this page until payment is verified!</strong><br>
+                Your order will be confirmed only after successful payment verification.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,112 @@
+{% extends "layout.html" %}
+
+{% block title %}Razorpay Payment - Campus Krishi{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fab fa-cc-stripe"></i> Razorpay Payment
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <!-- Order Details -->
+                    <div class="mb-4">
+                        <h6>Order Details</h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <tr>
+                                    <td><strong>Order ID:</strong></td>
+                                    <td>#{{ order.id }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Customer:</strong></td>
+                                    <td>{{ order.customer_name }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Amount:</strong></td>
+                                    <td class="text-success">₹{{ "%.2f"|format(order.total) }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Payment Form -->
+                    <form action="{{ url_for('razorpay_success', order_id=order.id) }}" method="POST">
+                        <script
+                            src="https://checkout.razorpay.com/v1/checkout.js"
+                            data-key="{{ key_id }}"
+                            data-amount="{{ razorpay_order.amount }}"
+                            data-currency="INR"
+                            data-order_id="{{ razorpay_order.id }}"
+                            data-buttontext="Pay ₹{{ "%.2f"|format(order.total) }}"
+                            data-name="Campus Krishi"
+                            data-description="Payment for Order #{{ order.id }}"
+                            data-image="/static/images/logo.png"
+                            data-prefill.name="{{ order.customer_name }}"
+                            data-prefill.email="{{ order.email or '' }}"
+                            data-prefill.contact="{{ order.phone }}"
+                            data-theme.color="#3399cc"
+                            data-modal.backdropclose="true"
+                        ></script>
+                        <input type="hidden" custom="Order #{{ order.id }}" name="hidden">
+                    </form>
+
+                    <!-- Payment Instructions -->
+                    <div class="alert alert-info mt-3">
+                        <h6><i class="fas fa-info-circle"></i> Payment Instructions</h6>
+                        <ul class="mb-0">
+                            <li>Click the "Pay" button above to proceed with Razorpay</li>
+                            <li>You will be redirected to secure Razorpay payment page</li>
+                            <li>Complete the payment using your preferred method</li>
+                            <li>You will be redirected back after payment completion</li>
+                            <li>Payment confirmation will be sent via SMS and email</li>
+                        </ul>
+                    </div>
+
+                    <!-- Cancel Option -->
+                    <div class="text-center mt-3">
+                        <a href="{{ url_for('payment', order_id=order.id) }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Choose Different Payment Method
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Payment Security Notice -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="alert alert-success">
+            <h6><i class="fas fa-lock"></i> Secure Payment</h6>
+            <p class="mb-0">
+                This payment is processed through Razorpay's secure payment gateway. 
+                Your financial information is never stored on our servers.
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+// Optional: Handle payment modal close event
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle payment modal close
+    if (window.Razorpay) {
+        window.Razorpay.on('payment.failed', function (response) {
+            console.error('Payment failed:', response.error);
+            alert('Payment failed. Please try again.');
+        });
+        
+        window.Razorpay.on('payment.success', function (response) {
+            console.log('Payment successful:', response);
+            // Form will automatically submit to success handler
+        });
+    }
+});
+</script>
+{% endblock %}

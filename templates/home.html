@@ -1,0 +1,240 @@
+{% extends "layout.html" %}
+
+{% block title %}Campus Krishi - Home{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section bg-success text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold">Campus Krishi: Growing Sustainability</h1>
+                <p class="lead">A student-led living lab for urban farming, climate resilience, and community innovation.</p>
+                <div class="mt-4">
+                    <a href="{{ url_for('about') }}" class="btn btn-light btn-lg me-3">
+                        <i class="fas fa-seedling"></i> Learn More
+                    </a>
+                    <a href="{{ url_for('process') }}" class="btn btn-outline-light btn-lg">
+                        Our Approach
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="text-center">
+                    <i class="fas fa-leaf display-1"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Today's Fresh Vegetables Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">Today's Fresh Vegetables</h2>
+        <p class="text-center text-muted mb-4">All vegetables are harvested fresh daily from our organic farm</p>
+
+        <!-- Filter and Sort -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+                    <input type="text" class="form-control" id="search-vegetables" placeholder="Search vegetables...">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <select class="form-select" id="sort-vegetables">
+                    <option value="">Sort by...</option>
+                    <option value="name">Name (A-Z)</option>
+                    <option value="price-low">Price (Low to High)</option>
+                    <option value="price-high">Price (High to Low)</option>
+                    <option value="stock">Stock Availability</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Vegetables Grid -->
+        <div class="row" id="vegetables-grid">
+            {% for vegetable in vegetables %}
+            <div class="col-md-4 col-lg-3 mb-4 vegetable-item" data-name="{{ vegetable.name|lower }}" data-price="{{ vegetable.price }}" data-stock="{{ vegetable.stock }}">
+                <div class="card h-100 vegetable-card">
+                    {% if vegetable.image %}
+                    <img src="{{ url_for('static', filename='uploads/' + vegetable.image) }}" class="card-img-top" alt="{{ vegetable.name }}">
+                    {% else %}
+                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                        <i class="fas fa-carrot fa-3x text-success"></i>
+                    </div>
+                    {% endif %}
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ vegetable.name }}</h5>
+                        <p class="card-text flex-grow-1">{{ vegetable.description or 'Fresh and delicious from our farm' }}</p>
+                        
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="h5 text-success mb-0">₹{{ "%.2f"|format(vegetable.price) }}/kg</span>
+                                <span class="badge {% if vegetable.stock > 20 %}bg-success{% elif vegetable.stock > 0 %}bg-warning{% else %}bg-danger{% endif %}">
+                                    {% if vegetable.stock > 0 %}
+                                    Stock: {{ vegetable.stock }}kg
+                                    {% else %}
+                                    Out of Stock
+                                    {% endif %}
+                                </span>
+                            </div>
+                            
+                            {% if vegetable.stock > 0 %}
+                            <div class="input-group input-group-sm mb-2">
+                                <input type="number" class="form-control" id="qty-{{ vegetable.id }}" value="1" min="1" max="{{ vegetable.stock }}">
+                                <button class="btn btn-outline-success quick-add" data-veg-id="{{ vegetable.id }}">
+                                    <i class="fas fa-cart-plus"></i> Quick Add
+                                </button>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mt-auto">
+                            {% if vegetable.stock > 0 %}
+                            <a href="{{ url_for('add_to_cart', veg_id=vegetable.id) }}" class="btn btn-success w-100">
+                                <i class="fas fa-shopping-cart"></i> Add to Cart
+                            </a>
+                            {% else %}
+                            <button class="btn btn-secondary w-100" disabled>
+                                <i class="fas fa-times-circle"></i> Out of Stock
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Empty State -->
+        {% if vegetables|length == 0 %}
+        <div class="text-center py-5">
+            <i class="fas fa-seedling fa-4x text-muted mb-3"></i>
+            <h3>No vegetables available today</h3>
+            <p class="text-muted">Please check back later for fresh produce</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- What We Do Section -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">What We Do</h2>
+        <div class="row text-center">
+            <div class="col-md-6 mb-4">
+                <div class="feature-box">
+                    <i class="fas fa-seedling fa-3x text-success mb-3"></i>
+                    <h4>Sustainable Campus Farming</h4>
+                    <p>Hands-on organic farming with climate-resilient methods and multiple growing cycles.</p>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="feature-box">
+                    <i class="fas fa-users fa-3x text-success mb-3"></i>
+                    <h4>Student & Community Engagement</h4>
+                    <p>Volunteering, internships, and live projects that build skills and foster innovation.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Current Crops & Practices Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">Current Crops & Practices</h2>
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title text-success">Second Crop Cycle Includes</h5>
+                        <ul class="mt-3">
+                            <li>Tomatoes</li>
+                            <li>Brinjal</li>
+                            <li>Green leafy vegetables</li>
+                            <li>Beans</li>
+                            <li>Knol-khol (Nokol)</li>
+                            <li>Chillies</li>
+                            <li>Banana</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title text-success">Practices Adopted</h5>
+                        <ul class="mt-3">
+                            <li>Composting facility</li>
+                            <li>Drip irrigation system</li>
+                            <li>Organic pest control (Neem oil)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Community Impact Section -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Community Impact</h2>
+        <div class="row text-center">
+            <div class="col-md-4 mb-4">
+                <div class="feature-box">
+                    <i class="fas fa-hand-holding-heart fa-3x text-success mb-3"></i>
+                    <h4>Student Learning</h4>
+                    <p>Hands-on projects for engineering and sustainability students.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="feature-box">
+                    <i class="fas fa-seedling fa-3x text-success mb-3"></i>
+                    <h4>Climate Resilience</h4>
+                    <p>Practices that build resilience to heat, drought, and urban stress.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="feature-box">
+                    <i class="fas fa-users fa-3x text-success mb-3"></i>
+                    <h4>Community Engagement</h4>
+                    <p>Volunteer programs, workshops, and collaborative innovation.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- Join Us Section -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Join Campus Krishi</h2>
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <p class="lead text-center">Be part of a student-led sustainability movement. Volunteer, take on live projects, or collaborate on research and innovation.</p>
+                <div class="text-center mt-4">
+                    <a href="{{ url_for('contact') }}" class="btn btn-success btn-lg me-3">Get Involved</a>
+                    <a href="{{ url_for('vision') }}" class="btn btn-outline-success btn-lg">Learn More</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Real-time Update Indicator -->
+<div class="position-fixed bottom-0 end-0 p-3">
+    <div id="update-indicator" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                Prices and stock updated!
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    </div>
+</div>
+{% endblock %}
